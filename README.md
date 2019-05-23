@@ -15,3 +15,7 @@ Run this shell script stand-alone or via crond. Ensure that you specify the foll
 `DNS_RECORD_TTL` - the DNS record TTL to update  
 
 `PATH_TRANSACTION` - the path of the gcloud transaction YAML (default: /tmp)  
+
+## Links
+- https://cloud.google.com/dns/
+- https://cloud.google.com/sdk/
