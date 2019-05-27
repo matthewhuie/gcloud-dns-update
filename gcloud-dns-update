@@ -26,9 +26,11 @@ fi
 
 DNS_RECORD_OLDDATA=$(gcloud dns record-sets list --zone=$DNS_ZONE --name=$DNS_RECORD_NAME --type=$DNS_RECORD_TYPE | grep $DNS_RECORD_NAME | xargs | cut -d\  -f4)
 DNS_RECORD_NEWDATA=$(dig TXT +short o-o.myaddr.l.google.com @ns1.google.com | xargs)
-DEFAULT="--zone=$DNS_ZONE --transaction-file=$PATH_TRANSACTION/gcloud-dns-transaction-$(date +%s).yaml"
 
-gcloud dns record-sets transaction start $DEFAULT 
-gcloud dns record-sets transaction remove $DEFAULT --name=$DNS_RECORD_NAME --type=$DNS_RECORD_TYPE --ttl=$DNS_RECORD_TTL $DNS_RECORD_OLDDATA
-gcloud dns record-sets transaction add $DEFAULT --name=$DNS_RECORD_NAME --type=$DNS_RECORD_TYPE --ttl=$DNS_RECORD_TTL $DNS_RECORD_NEWDATA 
-gcloud dns record-sets transaction execute $DEFAULT 
+if [[ $DNS_RECORD_OLDDATA != $DNS_RECORD_NEWDATA ]]; then
+  DEFAULT="--zone=$DNS_ZONE --transaction-file=$PATH_TRANSACTION/gcloud-dns-transaction-$(date +%s).yaml"
+  gcloud dns record-sets transaction start $DEFAULT 
+  gcloud dns record-sets transaction remove $DEFAULT --name=$DNS_RECORD_NAME --type=$DNS_RECORD_TYPE --ttl=$DNS_RECORD_TTL $DNS_RECORD_OLDDATA
+  gcloud dns record-sets transaction add $DEFAULT --name=$DNS_RECORD_NAME --type=$DNS_RECORD_TYPE --ttl=$DNS_RECORD_TTL $DNS_RECORD_NEWDATA 
+  gcloud dns record-sets transaction execute $DEFAULT 
+fi
